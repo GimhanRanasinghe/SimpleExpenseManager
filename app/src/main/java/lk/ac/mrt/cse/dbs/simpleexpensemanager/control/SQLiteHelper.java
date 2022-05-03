@@ -53,7 +53,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
         sqLiteDatabase.execSQL(create_account_table_query);
         sqLiteDatabase.execSQL(create_transaction_table_query);
-        System.out.println("hi");
     }
 
     @Override
@@ -67,7 +66,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         ArrayList<String> accountList = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.query(ACCOUNT_TABLE, new String[]{COL_ACCOUNT_NO}, null, null, null, null, null, null);
-
 
         while (cursor.moveToNext()) {
             String accountNO = cursor.getString(cursor.getColumnIndexOrThrow(COL_ACCOUNT_NO));
@@ -115,10 +113,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             String accountNO = cursor.getString(cursor.getColumnIndexOrThrow(COL_ACCOUNT_NO));
             String accountHolderName = cursor.getString(cursor.getColumnIndexOrThrow(COL_ACCOUNT_HOLDER_NAME));
             String bankName = cursor.getString(cursor.getColumnIndexOrThrow(COL_BANK_NAME));
-            String balance = cursor.getString(cursor.getColumnIndexOrThrow(COL_ACCOUNT_BALANCE));
+            String accBalance = cursor.getString(cursor.getColumnIndexOrThrow(COL_ACCOUNT_BALANCE));
             cursor.close();
             sqLiteDatabase.close();
-            return new Account(accountNO, accountHolderName, bankName, Double.parseDouble(balance));
+            return new Account(accountNO, accountHolderName, bankName, Double.parseDouble(accBalance));
         } else {
             cursor.close();
             sqLiteDatabase.close();
@@ -129,11 +127,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     public Boolean isValidAccount(String accountNo) {
 
-        String selection = COL_ACCOUNT_NO + " = ?"; //////
-        String[] selectionArgs = {accountNo};
-
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
-        Cursor cursor = sqLiteDatabase.query(ACCOUNT_TABLE, null, selection, selectionArgs, null, null, null, null);
+        Cursor cursor = sqLiteDatabase.query(ACCOUNT_TABLE, null, COL_ACCOUNT_NO + " = ?", new String[]{accountNo}, null, null, null, null);
 
         if (cursor.moveToFirst()) {
             cursor.close();
@@ -180,7 +175,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         sqLiteDatabase.update(ACCOUNT_TABLE, values, COL_ACCOUNT_NO + " = ?", new String[]{account.getAccountNo()});
     }
 
-    //TRANSACTIONS
+
 
     public void logTransaction(Transaction transaction) {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
