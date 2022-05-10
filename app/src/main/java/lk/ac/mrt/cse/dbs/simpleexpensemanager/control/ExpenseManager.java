@@ -63,6 +63,7 @@ public abstract class ExpenseManager implements Serializable {
         calendar.set(year, month, day);
         Date transactionDate = calendar.getTime();
 
+
         if (!amount.isEmpty()) {
             double amountVal = Double.parseDouble(amount);
             transactionsHolder.logTransaction(transactionDate, accountNo, expenseType, amountVal);
