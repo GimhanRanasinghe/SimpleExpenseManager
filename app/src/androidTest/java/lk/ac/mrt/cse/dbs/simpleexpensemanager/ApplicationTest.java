@@ -45,11 +45,12 @@ import static org.junit.Assert.assertTrue;
 public class ApplicationTest {
 
     private static ExpenseManager expenseManager;
+    private static SQLiteHelper sqLiteHelper;
 
     @Before
     public void setUp() {
         Context context = ApplicationProvider.getApplicationContext();
-        SQLiteHelper sqLiteHelper = new SQLiteHelper(context);
+        sqLiteHelper = new SQLiteHelper(context);
         expenseManager = new PersistentExpenseManager(sqLiteHelper);
         TransactionDAO persistentTransactionDAO = new PersistentTransactionDAO(sqLiteHelper);
         expenseManager.setTransactionsDAO(persistentTransactionDAO);
@@ -66,7 +67,7 @@ public class ApplicationTest {
 
     @Test
     public void testLogTransactionExpense() throws InvalidAccountException {
-        if (expenseManager.getAccountNumbersList().size()>0){
+        if (sqLiteHelper.isValidAccount("100")){
             int numberOfLogsBegin = expenseManager.getTransactionsDAO().getAllTransactionLogs().size();
             double initBalance = expenseManager.getAccountsDAO().getAccount("100").getBalance();
             expenseManager.updateAccountBalance("100", 12, 10, 2022, ExpenseType.valueOf("EXPENSE"), "5");
@@ -82,7 +83,7 @@ public class ApplicationTest {
 
     @Test
     public void testLogTransactionIncome() throws InvalidAccountException {
-        if (expenseManager.getAccountNumbersList().size()>0){
+        if (sqLiteHelper.isValidAccount("100")){
             int numberOfLogsBegin = expenseManager.getTransactionsDAO().getAllTransactionLogs().size();
             double initBalance = expenseManager.getAccountsDAO().getAccount("100").getBalance();
             expenseManager.updateAccountBalance("100", 12, 10, 2022, ExpenseType.valueOf("INCOME"), "5");
